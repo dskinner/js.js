@@ -1,14 +1,12 @@
 written through short turmoil by `me <mailto:dasacc22@gmail.com>`_.
 
-.. _what:
-
 What's the Point
 ================
 If you stumbled across this page, you may be wondering what this is all about. Specifically, this is to ease the pain of implementing prototypal inheritance in javascript. Whats so painful about the current implementation? Let's go over some example code.
 
 First, lets write up a base object that we’ll want to inherit from.
 
-.. sourcecode:: javascript
+::
   
   function A(name, age) {
     this.name = name;
@@ -19,7 +17,7 @@ First, lets write up a base object that we’ll want to inherit from.
 
 Now, according to `MDC <https://developer.mozilla.org/en/JavaScript>`_ we are being naive to write code like this for the purpose of inheritance. The only way to call the get_name and get_age functions is with an instance of A. Prototypal or not, that doesn’t help inheritance much, so lets do this right.
 
-.. sourcecode:: javascript
+::
 
   function A(name, age) {
     this.age = age;
@@ -32,14 +30,14 @@ Now, according to `MDC <https://developer.mozilla.org/en/JavaScript>`_ we are be
 
 Now make B and inherit A
 
-.. sourcecode:: javascript
+::
 
   function B() {};
   B.prototype = new A;
 
 Now lets make C with an extra param and function and inherit A.
 
-.. sourcecode:: javascript
+::
 
   function C(name, age, title, money) {
     this.title = title;
@@ -53,7 +51,7 @@ Now lets make C with an extra param and function and inherit A.
 
 Good? Not hardly. We cannot continue the flow we've been taking, it just doesn’t work. I erased the A prototype by using the prototype = {} syntax. So that syntax is no good for working with inheritance unless its the top level object, but I don't want to think about that when programming. Lets fix C for now.
 
-.. sourcecode:: javascript
+::
   
   function C(name, age, title, money) {
     this.title = title;
@@ -67,7 +65,7 @@ Now if you fire this up and test C you'll notice both attributes name and age ar
 
 Thats ok and pretty normal, so lets fix it by adding that A.call
 
-.. sourcecode:: javascript
+::
   
   function C(name, age, title, money) {
     A.call(this, name, age);
@@ -80,13 +78,11 @@ Thats ok and pretty normal, so lets fix it by adding that A.call
 
 Sweet buttery buttons! It works! You might note this code runs slower then one big object mash-up. Its the .call() method. This is a lot of leg work to use prototypal inheritance and places limits on a language that is otherwise rather expressive (though obscure at times). Now lets see what our js.js library can do to help with this.
 
-.. _how:
-
 How to use This
 ===============
 Let's go ahead and rewrite the above example following some basic paradigms.
 
-.. sourcecode:: javascript
+::
   
   var A {
       get_name: function() { return this.name; },
@@ -109,7 +105,7 @@ Let's go ahead and rewrite the above example following some basic paradigms.
 
 You'll notice A is written as an object. This is in the case that we want to redeclare A's functionality, then we can call the original method without the need to access the .prototype attribute. On its own, A is quite usable as we can declare a new instance of it and set the appropriate attributes outside of its scope. For example:
 
-.. sourcecode:: javascript
+::
   
   var a = new A();
   a.name = 'Daniel';
@@ -118,13 +114,13 @@ You'll notice A is written as an object. This is in the case that we want to red
 
 B inherits from A and also object, a special javascript object with an init magic method. This allows us to use the functionality of A and declare its variables in one line.
 
-.. sourcecode:: javascript
+::
   
   var b = new B({name: 'Daniel', age: 25});
 
 Next we have _C. The purpose of this naming convention is utterly personal. Effectively, _C is something that I've decided I will never need or want to access directly. Instead I would use the prototype'd C if ever needed. Note that this could be avoided by simply declaring the contents of _C inline during prototype declaration like so:
 
-.. sourcecode:: javascript
+::
   
   var C = prototype(function() {
       this.init = function() { console.log('msg from the init') }
@@ -139,8 +135,6 @@ Next we have _C. The purpose of this naming convention is utterly personal. Effe
 Note how I changed the get_name method of C above as well. If the function being called requires access to C properties, a use of .call and a reference to this is required. Also note the this.init function. All returns from prototype feature an __init__ magic method that instantiates keyword arguments as new object properties and then calls an objects init method if available. You can override js.js object's __init__ or suit js.js object's code to your liking, its short and sweet. Cases for such include overriding __init__ to handle variables passed in or setting up an init() to do things like bind object events to the UI on page load (assuming you instantiate the instance of the object on document load).
 
 You can specify your own constructor with magic methods instead of object. Refer to object closure in source as example.
-
-.. _get:
 
 Get the Code
 ============
