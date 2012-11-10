@@ -1,4 +1,4 @@
-written through short turmoil by `me <mailto:dasacc22@gmail.com>`_.
+written through short turmoil by `me <mailto:daniel@dasa.cc>`_.
 
 What's the Point
 ================
